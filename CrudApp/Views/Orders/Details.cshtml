@@ -1,0 +1,45 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h2>Order Details</h2>
+
+<div>
+    <strong>Order ID:</strong> @Model.Id<br />
+    <strong>User:</strong> @Model.User.Username (@Model.User.Email)<br />
+    <strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")
+</div>
+
+<hr />
+
+<h4>Products:</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price (AZN)</th>
+            <th>Quantity</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@(item.Product.Price.ToString("0.00"))</td>
+                <td>@item.Quantity</td>
+                <td>@((item.Quantity * item.Product.Price).ToString("0.00"))</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>
+    Total Price:
+    @Model.Items.Sum(i => i.Quantity * i.Product.Price).ToString("0.00") AZN
+</h4>
+
+<a asp-action="Index" class="btn btn-secondary">Back</a>
