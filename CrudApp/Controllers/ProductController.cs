@@ -62,9 +62,22 @@ namespace CrudApp.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             using var db = Connection;
+
+            // Check if the product is used in any order
+            var usageCount = db.ExecuteScalar<int>(
+                "SELECT COUNT(*) FROM OrderItems WHERE ProductId = @Id", new { Id = id });
+
+            if (usageCount > 0)
+            {
+                TempData["Error"] = "❌ Cannot delete product because it is used in one or more orders.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // If not used, delete safely
             db.Execute("DELETE FROM Products WHERE Id = @Id", new { Id = id });
             return RedirectToAction(nameof(Index));
         }
+
 
     }
 }

@@ -1,0 +1,78 @@
+﻿@using CrudApp.ViewModels
+@model CreateOrderViewModel
+
+@{
+    ViewData["Title"] = "Create Order";
+    var users = ViewBag.Users as List<User>;
+    var products = ViewBag.Products as List<Product>;
+}
+
+<h2>Create Order</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="UserId"></label>
+        <select asp-for="UserId" class="form-control">
+            @foreach (var user in users)
+            {
+                <option value="@user.Id">@user.Username (@user.Email)</option>
+            }
+        </select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+
+    <hr />
+
+    <div id="products-container">
+        <div class="product-row form-row mb-2">
+            <div class="col">
+                <select name="Products[0].ProductId" class="form-control product-select">
+                    <option value="">-- Select Product --</option>
+                    @foreach (var product in products)
+                    {
+                        <option value="@product.Id">@product.Name (@product.Price.ToString("0.00") AZN)</option>
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <input name="Products[0].Quantity" type="number" class="form-control" placeholder="Quantity" value="1" min="1" />
+            </div>
+        </div>
+    </div>
+
+    <button type="button" onclick="addProductRow()" class="btn btn-secondary">+ Add Product</button>
+
+    <hr />
+    <button type="submit" class="btn btn-success">Submit Order</button>
+</form>
+
+@section Scripts {
+    <script>
+        let productIndex = 1;
+
+        function addProductRow() {
+            const container = document.getElementById("products-container");
+            const newRow = document.createElement("div");
+            newRow.className = "product-row form-row mb-2";
+            newRow.innerHTML = `
+                <div class="col">
+                    <select name="Products[${productIndex}].ProductId" class="form-control product-select">
+                        <option value="">-- Select Product --</option>
+                        @foreach (var product in products)
+                        {
+                                <option value="@product.Id">@product.Name (@product.Price.ToString("0.00") AZN)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col">
+                    <input name="Products[${productIndex}].Quantity" type="number" class="form-control" placeholder="Quantity" value="1" min="1" />
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger" onclick="this.closest('.product-row').remove()">Remove</button>
+                </div>
+            `;
+            container.appendChild(newRow);
+            productIndex++;
+        }
+    </script>
+}

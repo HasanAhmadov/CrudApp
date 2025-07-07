@@ -62,9 +62,22 @@ namespace CrudApp.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             using var db = Connection;
+
+            // Check if the user is referenced in any orders
+            var orderCount = db.ExecuteScalar<int>(
+                "SELECT COUNT(*) FROM Orders WHERE UserId = @Id", new { Id = id });
+
+            if (orderCount > 0)
+            {
+                TempData["Error"] = "❌ Cannot delete user because they are linked to one or more orders.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // If not used, delete the user
             db.Execute("DELETE FROM Users WHERE Id = @Id", new { Id = id });
             return RedirectToAction(nameof(Index));
         }
+
     }
 
 }

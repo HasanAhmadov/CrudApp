@@ -1,0 +1,19 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Delete Order";
+}
+
+<h2>Delete Order</h2>
+
+<div>
+    <strong>Order ID:</strong> @Model.Id<br />
+    <strong>User:</strong> @Model.User?.Username (@Model.User?.Email)<br />
+    <strong>Date:</strong> @Model.OrderDate
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
