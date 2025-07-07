@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CrudApp.Models;
+﻿using CrudApp.Models;
 using Dapper;
-using System.Data;
-using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace CrudApp.Controllers
 {
     [Authorize]
-    public class UsersController : Controller
+    public class ProductsController : Controller
     {
         private readonly string _connectionString;
 
-        public UsersController(IConfiguration config)
+        public ProductsController(IConfiguration config)
         {
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
@@ -22,49 +22,49 @@ namespace CrudApp.Controllers
         public IActionResult Index()
         {
             using var db = Connection;
-            var users = db.Query<User>("SELECT * FROM Users").ToList();
-            return View(users);
+            var products = db.Query<Product>("SELECT * FROM Products").ToList();
+            return View(products);
         }
 
         public IActionResult Create() => View();
 
         [HttpPost]
-        public IActionResult Create(User user)
+        public IActionResult Create(Product product)
         {
             using var db = Connection;
-            db.Execute("INSERT INTO Users (Username, Email) VALUES (@Username, @Email)", user);
+            db.Execute("INSERT INTO Products (Name, Price) VALUES (@Name, @Price)", product);
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(int id)
         {
             using var db = Connection;
-            var user = db.QueryFirstOrDefault<User>("SELECT * FROM Users WHERE Id = @Id", new { Id = id });
-            return View(user);
+            var product = db.QueryFirstOrDefault<Product>("SELECT * FROM Products WHERE Id = @Id", new { Id = id });
+            return View(product);
         }
 
         [HttpPost]
-        public IActionResult Edit(User user)
+        public IActionResult Edit(Product product)
         {
             using var db = Connection;
-            db.Execute("UPDATE Users SET Username = @Username, Email = @Email WHERE Id = @Id", user);
+            db.Execute("UPDATE Products SET Name = @Name, Price = @Price WHERE Id = @Id", product);
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Delete(int id)
         {
             using var db = Connection;
-            var user = db.QueryFirstOrDefault<User>("SELECT * FROM Users WHERE Id = @Id", new { Id = id });
-            return View(user);
+            var product = db.QueryFirstOrDefault<Product>("SELECT * FROM Products WHERE Id = @Id", new { Id = id });
+            return View(product);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
             using var db = Connection;
-            db.Execute("DELETE FROM Users WHERE Id = @Id", new { Id = id });
+            db.Execute("DELETE FROM Products WHERE Id = @Id", new { Id = id });
             return RedirectToAction(nameof(Index));
         }
-    }
 
+    }
 }
