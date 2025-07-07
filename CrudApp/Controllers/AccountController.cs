@@ -11,7 +11,6 @@ namespace CrudApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            // For demo: use static username/password
             if (username == "hasan" && password == "123")
             {
                 var claims = new List<Claim>
