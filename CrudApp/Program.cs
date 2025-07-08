@@ -4,7 +4,6 @@ using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register DB connection
 builder.Services.AddScoped<IDbConnection>(sp =>
     new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
