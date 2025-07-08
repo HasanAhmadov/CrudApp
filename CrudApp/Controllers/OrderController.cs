@@ -7,7 +7,7 @@ using System.Data;
 
 namespace CrudApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin, Accountant, Cashier")]
     public class OrdersController : Controller
     {
         private readonly IDbConnection _db;
@@ -17,7 +17,6 @@ namespace CrudApp.Controllers
             _db = db;
         }
 
-        // GET: /Order
         public IActionResult Index()
         {
             var sql = @"
@@ -34,12 +33,10 @@ namespace CrudApp.Controllers
             return View(orders);
         }
 
-
-        // GET: /Order/Details/5
         public IActionResult Details(int id)
         {
             var sql = @"
-            SELECT o.Id, o.OrderDate, u.Id, u.Username, u.Email,
+            SELECT o.Id, o.OrderDate, u.Id, u.Username,
                    p.Id, p.Name, p.Price, oi.Quantity
             FROM Orders o
             JOIN Users u ON o.UserId = u.Id
@@ -73,7 +70,6 @@ namespace CrudApp.Controllers
             return View(orderResult);
         }
 
-        // GET: /Order/Create
         public IActionResult Create()
         {
             ViewBag.Users = _db.Query<User>("SELECT * FROM Users").ToList();
@@ -81,7 +77,6 @@ namespace CrudApp.Controllers
             return View();
         }
 
-        // POST: /Order/Create
         [HttpPost]
         public IActionResult Create(CreateOrderViewModel vm)
         {
@@ -101,7 +96,6 @@ namespace CrudApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: /Order/Edit/5
         public IActionResult Edit(int id)
         {
             var order = _db.QueryFirstOrDefault<Order>("SELECT * FROM Orders WHERE Id = @Id", new { Id = id });
@@ -111,7 +105,6 @@ namespace CrudApp.Controllers
             return View(order);
         }
 
-        // POST: /Order/Edit/5
         [HttpPost]
         public IActionResult Edit(Order order)
         {
@@ -119,7 +112,6 @@ namespace CrudApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: /Order/Delete/5
         public IActionResult Delete(int id)
         {
             var sql = @"
@@ -137,8 +129,6 @@ namespace CrudApp.Controllers
             return View(order);
         }
 
-
-        // POST: /Order/Delete/5
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {

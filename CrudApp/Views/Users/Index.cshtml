@@ -27,7 +27,8 @@
                 <tr>
                     <th style="width: 60px;">#</th>
                     <th>Username</th>
-                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Role</th>
                     <th style="width: 160px;">Actions</th>
                 </tr>
             </thead>
@@ -37,7 +38,8 @@
                     <tr>
                         <td class="text-center">@user.Id</td>
                         <td>@user.Username</td>
-                        <td>@user.Email</td>
+                        <td>@user.Password</td>
+                        <td>@user.Role</td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@user.Id">
                                 <i class="bi bi-pencil-square"></i> Edit
