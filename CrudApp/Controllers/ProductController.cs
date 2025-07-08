@@ -7,7 +7,7 @@ using System.Data;
 
 namespace CrudApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin, Accountant")]
     public class ProductsController : Controller
     {
         private readonly string _connectionString;
@@ -63,7 +63,6 @@ namespace CrudApp.Controllers
         {
             using var db = Connection;
 
-            // Check if the product is used in any order
             var usageCount = db.ExecuteScalar<int>(
                 "SELECT COUNT(*) FROM OrderItems WHERE ProductId = @Id", new { Id = id });
 
@@ -73,7 +72,6 @@ namespace CrudApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // If not used, delete safely
             db.Execute("DELETE FROM Products WHERE Id = @Id", new { Id = id });
             return RedirectToAction(nameof(Index));
         }

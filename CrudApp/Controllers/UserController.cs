@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CrudApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class UsersController : Controller
     {
         private readonly string _connectionString;
@@ -32,7 +32,7 @@ namespace CrudApp.Controllers
         public IActionResult Create(User user)
         {
             using var db = Connection;
-            db.Execute("INSERT INTO Users (Username, Email) VALUES (@Username, @Email)", user);
+            db.Execute("INSERT INTO Users (Username, Password, Role) VALUES (@Username, @Password, @Role)", user);
             return RedirectToAction(nameof(Index));
         }
 
@@ -47,7 +47,7 @@ namespace CrudApp.Controllers
         public IActionResult Edit(User user)
         {
             using var db = Connection;
-            db.Execute("UPDATE Users SET Username = @Username, Email = @Email WHERE Id = @Id", user);
+            db.Execute("UPDATE Users SET Username = @Username, Password = @Password, Role = @Role WHERE Id = @Id", user);
             return RedirectToAction(nameof(Index));
         }
 
@@ -63,7 +63,6 @@ namespace CrudApp.Controllers
         {
             using var db = Connection;
 
-            // Check if the user is referenced in any orders
             var orderCount = db.ExecuteScalar<int>(
                 "SELECT COUNT(*) FROM Orders WHERE UserId = @Id", new { Id = id });
 
@@ -73,7 +72,6 @@ namespace CrudApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // If not used, delete the user
             db.Execute("DELETE FROM Users WHERE Id = @Id", new { Id = id });
             return RedirectToAction(nameof(Index));
         }
