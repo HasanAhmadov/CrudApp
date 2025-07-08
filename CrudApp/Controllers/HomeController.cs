@@ -19,11 +19,6 @@ namespace CrudApp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -35,16 +30,19 @@ namespace CrudApp.Controllers
         {
             return View();
         }
+
         [Authorize(Roles ="Admin")]
         public IActionResult AdminPage()
         {
             return View();
         }
+
         [Authorize(Roles ="Accountant")]
         public IActionResult AccountantPage()
         {
             return View();
         }
+
         [Authorize(Roles ="Cashier")]
         public IActionResult CashierPage()
         {

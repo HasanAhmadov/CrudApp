@@ -75,7 +75,5 @@ namespace CrudApp.Controllers
             db.Execute("DELETE FROM Users WHERE Id = @Id", new { Id = id });
             return RedirectToAction(nameof(Index));
         }
-
     }
-
 }
