@@ -10,8 +10,6 @@ namespace CrudApp.Controllers
 {
     public class AccountController : Controller
     {
-        public List<User> users = null;
-
         private readonly IDbConnection _db;
 
         public AccountController(IDbConnection db)
@@ -33,23 +31,22 @@ namespace CrudApp.Controllers
             string sql = @"SELECT u.Id, u.Username, u.Password, r.Name as Role
                            FROM Users u
                            JOIN Roles r on u.Role = r.Id
-                           WHERE Username = @Username AND Password = @Password";
+                           WHERE Username = @Username";
 
             var user = _db.QueryFirstOrDefault<User>(sql, new
             {
-                Username = loginModel.Username,
-                Password = loginModel.Password
+                Username = loginModel.Username
             });
 
-            if (user != null)
+            if (user != null && BCrypt.Net.BCrypt.Verify(loginModel.Password, user.Password))
             {
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.Role),
-            new Claim("MyCookieAuth", "Code")
-        };
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim("MyCookieAuth", "Code")
+                };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
@@ -59,16 +56,13 @@ namespace CrudApp.Controllers
                     IsPersistent = loginModel.RememberLogin
                 });
 
-                if (string.IsNullOrEmpty(loginModel.ReturnUrl))
-                    return RedirectToAction("Index", "Home");
+                return string.IsNullOrEmpty(loginModel.ReturnUrl)
+                    ? RedirectToAction("Index", "Home")
+                    : LocalRedirect(loginModel.ReturnUrl);
+            }
 
-                return LocalRedirect(loginModel.ReturnUrl);
-            }
-            else
-            {
-                ViewBag.Message = "Invalid credentials";
-                return View(loginModel);
-            }
+            ViewBag.Message = "Invalid credentials";
+            return View(loginModel);
         }
 
         public async Task<IActionResult> Logout()

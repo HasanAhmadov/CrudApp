@@ -8,14 +8,9 @@ using System.Data;
 namespace CrudApp.Controllers
 {
     [Authorize(Roles ="Admin, Accountant")]
-    public class ProductsController : Controller
+    public class ProductsController(IConfiguration config) : Controller
     {
-        private readonly string _connectionString;
-
-        public ProductsController(IConfiguration config)
-        {
-            _connectionString = config.GetConnectionString("DefaultConnection");
-        }
+        private readonly string? _connectionString = config.GetConnectionString("DefaultConnection");
 
         private IDbConnection Connection => new SqlConnection(_connectionString);
 
